@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>D&D Initiative & HP Tracker</title>
+    <style>
+        :root {
+            --bg-dark: #0f111a;
+            --card-bg: #1a1d2e;
+            --card-border: #2a2e45;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent-gold: #fbbf24;
+            --danger: #ef4444;
+            --success: #22c55e;
+            --temp-hp: #a855f7;
+
+            /* Dynamic square sizing variable */
+            --square-size: 140px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+        }
+
+        /* Top Controls Bar */
+        header {
+            width: 100%;
+            max-width: 950px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-gold);
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: #2d334d;
+            color: #fff;
+            border: 1px solid var(--card-border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        button:active {
+            transform: scale(0.96);
+        }
+
+        button.btn-primary { background: #3b82f6; }
+        button.btn-success { background: var(--success); }
+        button.btn-danger { background: var(--danger); }
+
+        .size-picker {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .size-picker input {
+            width: 80px;
+            accent-color: var(--accent-gold);
+        }
+
+        /* Initiative Vertical List */
+        #tracker-list {
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding-bottom: 50px;
+        }
+
+        /* Character Card */
+        .combatant-card {
+            background: var(--card-bg);
+            border: 2px solid var(--card-border);
+            border-radius: 14px;
+            padding: 12px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.25s ease;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+        }
+
+        /* Active Turn Highlight */
+        .combatant-card.is-active {
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 20px rgba(251, 191, 36, 0.35);
+            background: #24273d;
+        }
+
+        .combatant-card.is-active::before {
+            content: 'ACTIVE TURN';
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--accent-gold);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 900;
+            padding: 2px 8px;
+            border-radius: 4px;
+            letter-spacing: 1px;
+        }
+
+        /* INITIATIVE BADGE & INPUT */
+        .init-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #0f111a;
+            border: 2px solid var(--card-border);
+            border-radius: 10px;
+            padding: 8px;
+            min-width: 65px;
+        }
+
+        .init-badge label {
+            font-size: 0.65rem;
+            font-weight: 900;
+            color: var(--accent-gold);
+            letter-spacing: 0.5px;
+        }
+
+        .init-badge input {
+            width: 45px;
+            background: transparent;
+            border: none;
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* HP SECTION */
+        .hp-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            min-width: 230px;
+            border-right: 1px solid var(--card-border);
+            padding-right: 12px;
+        }
+
+        .hp-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            flex-wrap: wrap;
+        }
+
+        .hp-display {
+            font-size: 1.2rem;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .hp-number-input {
+            width: 58px;
+            background: #0f111a;
+            border: 1px solid var(--card-border);
+            color: var(--success);
+            padding: 4px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .max-hp-input {
+            width: 58px;
+            background: #0f111a;
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 4px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .btn-full-hp {
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            background: #1e293b;
+            border: 1px solid var(--card-border);
+            color: var(--accent-gold);
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-full-hp:hover {
+            background: var(--accent-gold);
+            color: #000;
+        }
+
+        .temp-hp-display {
+            font-size: 0.9rem;
+            color: var(--temp-hp);
+        }
+
+        .hp-inputs {
+            display: flex;
+            gap: 6px;
+        }
+
+        .hp-inputs input[type="number"] {
+            width: 60px;
+            background: #0f111a;
+            border: 1px solid var(--card-border);
+            color: #fff;
+            padding: 6px;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        .hp-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .hp-buttons button {
+            padding: 6px 10px;
+            font-size: 0.8rem;
+        }
+
+        /* History Log */
+        .history-box {
+            background: #0f111a;
+            border-radius: 6px;
+            padding: 6px 8px;
+            max-height: 55px;
+            overflow-y: auto;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border: 1px solid #232738;
+        }
+
+        .history-entry {
+            margin-bottom: 2px;
+            white-space: nowrap;
+        }
+        .history-entry.dmg { color: #f87171; }
+        .history-entry.heal { color: #4ade80; }
+        .history-entry.temp { color: #c084fc; }
+
+        /* Dynamic Character Square */
+        .character-square-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            user-select: none;
+        }
+
+        .character-square {
+            width: var(--square-size);
+            height: var(--square-size);
+            background: #0f111a;
+            border: 2px dashed var(--card-border);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: width 0.2s, height 0.2s, border-color 0.2s;
+        }
+
+        .character-square:hover {
+            border-color: var(--accent-gold);
+        }
+
+        .character-square img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-hint {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            text-align: center;
+            padding: 4px;
+        }
+
+        .character-square:hover .upload-hint,
+        .character-square.empty .upload-hint {
+            opacity: 1;
+        }
+
+        .character-square input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .name-input {
+            width: var(--square-size);
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid transparent;
+            color: var(--text-main);
+            font-weight: bold;
+            text-align: center;
+            font-size: 1rem;
+            padding: 2px;
+            transition: border-color 0.2s;
+        }
+
+        .name-input:focus {
+            outline: none;
+            border-bottom-color: var(--accent-gold);
+        }
+
+        /* Actions */
+        .card-actions button {
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--danger);
+            border-radius: 6px;
+        }
+
+        .card-actions button:hover {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        /* Mobile & iPad Responsive Adjustments */
+        @media (max-width: 650px) {
+            .combatant-card {
+                flex-wrap: wrap;
+            }
+            .hp-section {
+                border-right: none;
+                border-bottom: 1px solid var(--card-border);
+                padding-right: 0;
+                padding-bottom: 10px;
+                width: 100%;
+            }
+            .character-square-container {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-title">⚔️ Initiative Tracker</div>
+
+    <div class="header-controls">
+        <div class="size-picker">
+            <label for="square-slider">Square Size:</label>
+            <input type="range" id="square-slider" min="80" max="220" value="140" oninput="adjustSquareSize(this.value)" />
+        </div>
+
+        <button onclick="addCombatant()" class="btn-primary">+ Add Creature</button>
+        <button onclick="resetTracker()" class="btn-danger">Reset All</button>
+    </div>
+</header>
+
+<div id="tracker-list">
+    <!-- Dynamic Cards Rendered Here -->
+</div>
+
+<script>
+    let activeId = null;
+    let combatants = [];
+
+    // Initialize with default demo cards
+    window.onload = () => {
+        addCombatant('Hero Paladin', 20, 50, 'https://picsum.photos/seed/paladin/200');
+        addCombatant('Goblin Leader', 14, 18, 'https://picsum.photos/seed/goblin/200');
+        addCombatant('Wizard', 8, 22, 'https://picsum.photos/seed/wizard/200');
+    };
+
+    function adjustSquareSize(val) {
+        document.documentElement.style.setProperty('--square-size', `${val}px`);
+    }
+
+    function sortCombatants() {
+        combatants.sort((a, b) => b.init - a.init);
+    }
+
+    function addCombatant(name = 'New Creature', init = 10, maxHp = 30, imgUrl = '') {
+        const id = Date.now() + Math.random().toString(36).substr(2, 4);
+        const hp = Number(maxHp);
+        combatants.push({
+            id,
+            name,
+            init: Number(init),
+            hp,
+            maxHp: hp,
+            tempHp: 0,
+            img: imgUrl,
+            history: [`Created with ${hp} HP`]
+        });
+        sortCombatants();
+        if (!activeId) activeId = id;
+        render();
+    }
+
+    function removeCombatant(id, e) {
+        e.stopPropagation();
+        combatants = combatants.filter(c => c.id !== id);
+        if (activeId === id) {
+            activeId = combatants.length > 0 ? combatants[0].id : null;
+        }
+        render();
+    }
+
+    function setActive(id) {
+        activeId = id;
+        render();
+    }
+
+    /* Live Update Handlers (Updates state without losing focus) */
+    function handleMaxHpInput(id, val) {
+        const c = combatants.find(x => x.id === id);
+        if (c) {
+            const newMax = Math.max(0, parseInt(val) || 0);
+            c.maxHp = newMax;
+            c.hp = newMax; // Instantly set current HP to match new Max HP
+
+            // Live update the current HP box in DOM
+            const currInput = document.getElementById(`curr-hp-${id}`);
+            if (currInput) currInput.value = newMax;
+        }
+    }
+
+    function handleCurrentHpInput(id, val) {
+        const c = combatants.find(x => x.id === id);
+        if (c) {
+            c.hp = Math.max(0, parseInt(val) || 0);
+        }
+    }
+
+    function handleInitInput(id, val) {
+        const c = combatants.find(x => x.id === id);
+        if (c) {
+            c.init = parseInt(val) || 0;
+        }
+    }
+
+    function finalizeInitChange() {
+        sortCombatants();
+        render();
+    }
+
+    function resetToFullHp(id) {
+        const c = combatants.find(x => x.id === id);
+        if (c) {
+            c.hp = c.maxHp;
+            c.history.unshift(`Restored to full HP (${c.maxHp})`);
+            render();
+        }
+    }
+
+    /* Damage, Healing & Temp HP Logic */
+    function applyDamage(id) {
+        const c = combatants.find(x => x.id === id);
+        const valInput = document.getElementById(`val-${id}`);
+        let amount = parseInt(valInput.value) || 0;
+        if (amount <= 0) return;
+
+        let dmgRemaining = amount;
+        let tempAbsorbed = 0;
+
+        // 1. Temp HP absorbs damage first
+        if (c.tempHp > 0) {
+            if (c.tempHp >= dmgRemaining) {
+                c.tempHp -= dmgRemaining;
+                tempAbsorbed = dmgRemaining;
+                dmgRemaining = 0;
+            } else {
+                tempAbsorbed = c.tempHp;
+                dmgRemaining -= c.tempHp;
+                c.tempHp = 0;
+            }
+        }
+
+        // 2. Subtract remaining damage from standard HP
+        c.hp -= dmgRemaining;
+        if (c.hp < 0) c.hp = 0;
+
+        let logMsg = `-${amount} Dmg`;
+        if (tempAbsorbed > 0) logMsg += ` (${tempAbsorbed} to Temp HP)`;
+        c.history.unshift(logMsg);
+
+        valInput.value = '';
+        render();
+    }
+
+    function applyHeal(id) {
+        const c = combatants.find(x => x.id === id);
+        const valInput = document.getElementById(`val-${id}`);
+        let amount = parseInt(valInput.value) || 0;
+        if (amount <= 0) return;
+
+        c.hp += amount;
+        if (c.hp > c.maxHp) c.hp = c.maxHp;
+
+        c.history.unshift(`+${amount} Heal`);
+        valInput.value = '';
+        render();
+    }
+
+    function addTempHp(id) {
+        const c = combatants.find(x => x.id === id);
+        const valInput = document.getElementById(`val-${id}`);
+        let amount = parseInt(valInput.value) || 0;
+        if (amount <= 0) return;
+
+        c.tempHp = amount;
+        c.history.unshift(`+${amount} Temp HP`);
+        valInput.value = '';
+        render();
+    }
+
+    function handleImageUpload(id, input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const c = combatants.find(x => x.id === id);
+                c.img = e.target.result;
+                render();
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function updateName(id, newName) {
+        const c = combatants.find(x => x.id === id);
+        if (c) c.name = newName;
+    }
+
+    function resetTracker() {
+        if (confirm("Are you sure you want to clear the tracker?")) {
+            combatants = [];
+            activeId = null;
+            render();
+        }
+    }
+
+    /* Render UI Cards */
+    function render() {
+        const listEl = document.getElementById('tracker-list');
+        listEl.innerHTML = '';
+
+        combatants.forEach((c) => {
+            const isActive = c.id === activeId;
+
+            const card = document.createElement('div');
+            card.className = `combatant-card ${isActive ? 'is-active' : ''}`;
+
+            // Tap/click card to select as Active
+            card.onclick = () => setActive(c.id);
+
+            card.innerHTML = `
+          <!-- INITIATIVE INPUT -->
+          <div class="init-badge" onclick="event.stopPropagation()">
+            <label>INIT</label>
+            <input type="number" value="${c.init}" oninput="handleInitInput('${c.id}', this.value)" onchange="finalizeInitChange()" />
+          </div>
+
+          <!-- HP & CALCULATOR SECTION -->
+          <div class="hp-section" onclick="event.stopPropagation()">
+            <div class="hp-stats">
+              <span class="hp-display">
+                ❤️
+                <input type="number" id="curr-hp-${c.id}" class="hp-number-input" value="${c.hp}" title="Current HP" oninput="handleCurrentHpInput('${c.id}', this.value)" />
+                /
+                <input type="number" id="max-hp-${c.id}" class="max-hp-input" value="${c.maxHp}" title="Max HP" oninput="handleMaxHpInput('${c.id}', this.value)" />
+              </span>
+              <button class="btn-full-hp" onclick="resetToFullHp('${c.id}')" title="Set HP to Max">Full</button>
+              ${c.tempHp > 0 ? `<span class="temp-hp-display">🛡️ +${c.tempHp}</span>` : ''}
+            </div>
+
+            <div class="hp-inputs">
+              <input type="number" id="val-${c.id}" placeholder="Amt" min="1" />
+              <div class="hp-buttons">
+                <button onclick="applyDamage('${c.id}')" class="btn-danger">- Dmg</button>
+                <button onclick="applyHeal('${c.id}')" class="btn-success">+ Heal</button>
+                <button onclick="addTempHp('${c.id}')" style="background:var(--temp-hp)">+ Temp</button>
+              </div>
+            </div>
+
+            <div class="history-box">
+              ${c.history.map(h => {
+                let classType = h.includes('Dmg') ? 'dmg' : h.includes('Heal') || h.includes('Restored') ? 'heal' : 'temp';
+                return `<div class="history-entry ${classType}">${h}</div>`;
+            }).join('')}
+            </div>
+          </div>
+
+          <!-- SQUARE IMAGE & NAME -->
+          <div class="character-square-container">
+            <div class="character-square ${!c.img ? 'empty' : ''}">
+              ${c.img ? `<img src="${c.img}" alt="Token" />` : `<span style="font-size:2rem;">👤</span>`}
+              <div class="upload-hint">📷 Change Image</div>
+              <input type="file" accept="image/*" onchange="handleImageUpload('${c.id}', this)" onclick="event.stopPropagation()" />
+            </div>
+            <input type="text" class="name-input" value="${c.name}" oninput="updateName('${c.id}', this.value)" onclick="event.stopPropagation()" />
+          </div>
+
+          <!-- DELETE BUTTON -->
+          <div class="card-actions">
+            <button onclick="removeCombatant('${c.id}', event)" title="Remove Creature">✕</button>
+          </div>
+        `;
+
+            listEl.appendChild(card);
+        });
+    }
+</script>
+</body>
+</html>
