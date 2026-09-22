@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>D&D Initiative & HP Tracker</title>
   <style>
     :root {
-      --bg-dark: #0f111a;
-      --card-bg: #1a1d2e;
-      --card-border: #2a2e45;
+      --bg-dark: #0b0d14;
+      --card-bg: #161928;
+      --card-border: #282c44;
       --text-main: #e2e8f0;
       --text-muted: #94a3b8;
       --accent-gold: #fbbf24;
@@ -16,8 +16,8 @@
       --success: #22c55e;
       --temp-hp: #a855f7;
       
-      /* Dynamic square sizing variable */
-      --square-size: 140px;
+      /* Dynamic square sizing variable controlled by header slider */
+      --square-size: 130px;
     }
 
     * {
@@ -38,30 +38,33 @@
       padding: 15px;
     }
 
-    /* Top Controls Bar */
     header {
       width: 100%;
-      max-width: 950px;
+      max-width: 1100px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 15px 20px;
+      padding: 14px 20px;
       margin-bottom: 20px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
       gap: 15px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
       position: sticky;
       top: 10px;
       z-index: 100;
     }
 
     .header-title {
-      font-size: 1.2rem;
-      font-weight: bold;
+      font-size: 1.25rem;
+      font-weight: 800;
       color: var(--accent-gold);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: 0.5px;
     }
 
     .header-controls {
@@ -72,7 +75,7 @@
     }
 
     button {
-      background: #2d334d;
+      background: #23273e;
       color: #fff;
       border: 1px solid var(--card-border);
       padding: 8px 16px;
@@ -80,10 +83,14 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+    }
+
+    button:hover {
+      filter: brightness(1.15);
     }
 
     button:active {
@@ -105,66 +112,63 @@
     .size-picker input {
       width: 80px;
       accent-color: var(--accent-gold);
+      cursor: pointer;
     }
 
-    /* Initiative Vertical List */
     #tracker-list {
       width: 100%;
-      max-width: 950px;
+      max-width: 1100px;
       display: flex;
       flex-direction: column;
       gap: 16px;
       padding-bottom: 50px;
     }
 
-    /* Character Card */
     .combatant-card {
       background: var(--card-bg);
       border: 2px solid var(--card-border);
       border-radius: 14px;
-      padding: 12px;
+      padding: 14px;
       display: flex;
       flex-direction: row;
       align-items: center;
       gap: 16px;
       transition: all 0.25s ease;
       position: relative;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
       cursor: pointer;
     }
 
-    /* Active Turn Highlight */
     .combatant-card.is-active {
       border-color: var(--accent-gold);
-      box-shadow: 0 0 20px rgba(251, 191, 36, 0.35);
-      background: #24273d;
+      box-shadow: 0 0 22px rgba(251, 191, 36, 0.3);
+      background: #1f2338;
     }
 
     .combatant-card.is-active::before {
-      content: 'ACTIVE TURN';
+      content: 'AM ZUG';
       position: absolute;
       top: -10px;
       right: 20px;
       background: var(--accent-gold);
       color: #000;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 900;
       padding: 2px 8px;
       border-radius: 4px;
       letter-spacing: 1px;
     }
 
-    /* INITIATIVE BADGE & INPUT */
     .init-badge {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      background: #0f111a;
+      background: #0b0d14;
       border: 2px solid var(--card-border);
       border-radius: 10px;
-      padding: 8px;
-      min-width: 65px;
+      padding: 8px 6px;
+      min-width: 60px;
     }
 
     .init-badge label {
@@ -184,27 +188,26 @@
       text-align: center;
     }
 
-    /* HP SECTION */
     .hp-section {
-      flex: 1;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      min-width: 230px;
+      min-width: 220px;
+      max-width: 250px;
       border-right: 1px solid var(--card-border);
-      padding-right: 12px;
+      padding-right: 14px;
     }
 
     .hp-stats {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       font-weight: bold;
       flex-wrap: wrap;
     }
 
     .hp-display {
-      font-size: 1.2rem;
+      font-size: 1.15rem;
       color: var(--success);
       display: flex;
       align-items: center;
@@ -212,31 +215,31 @@
     }
 
     .hp-number-input {
-      width: 58px;
-      background: #0f111a;
+      width: 54px;
+      background: #0b0d14;
       border: 1px solid var(--card-border);
       color: var(--success);
       padding: 4px;
       border-radius: 6px;
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: bold;
     }
 
     .max-hp-input {
-      width: 58px;
-      background: #0f111a;
+      width: 54px;
+      background: #0b0d14;
       border: 1px solid var(--card-border);
       color: var(--text-main);
       padding: 4px;
       border-radius: 6px;
       text-align: center;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: bold;
     }
 
     .btn-full-hp {
-      padding: 4px 10px;
+      padding: 4px 8px;
       font-size: 0.75rem;
       background: #1e293b;
       border: 1px solid var(--card-border);
@@ -252,8 +255,9 @@
     }
 
     .temp-hp-display {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--temp-hp);
+      font-weight: 700;
     }
 
     .hp-inputs {
@@ -262,14 +266,14 @@
     }
 
     .hp-inputs input[type="number"] {
-      width: 60px;
-      background: #0f111a;
+      width: 55px;
+      background: #0b0d14;
       border: 1px solid var(--card-border);
       color: #fff;
-      padding: 6px;
+      padding: 5px;
       border-radius: 6px;
       text-align: center;
-      font-size: 1rem;
+      font-size: 0.95rem;
     }
 
     .hp-buttons {
@@ -278,20 +282,19 @@
     }
 
     .hp-buttons button {
-      padding: 6px 10px;
-      font-size: 0.8rem;
+      padding: 5px 8px;
+      font-size: 0.75rem;
     }
 
-    /* History Log */
     .history-box {
-      background: #0f111a;
+      background: #0b0d14;
       border-radius: 6px;
       padding: 6px 8px;
-      max-height: 55px;
+      max-height: 50px;
       overflow-y: auto;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--text-muted);
-      border: 1px solid #232738;
+      border: 1px solid #1e2238;
     }
 
     .history-entry {
@@ -302,7 +305,62 @@
     .history-entry.heal { color: #4ade80; }
     .history-entry.temp { color: #c084fc; }
 
-    /* Dynamic Character Square */
+    .conditions-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-right: 1px solid var(--card-border);
+      padding-right: 14px;
+      min-width: 260px;
+    }
+
+    .conditions-header {
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    .conditions-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      align-content: flex-start;
+    }
+
+    .condition-btn {
+      background: #0d0f1a;
+      border: 1.5px solid var(--cond-color);
+      color: var(--cond-color);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      user-select: none;
+      opacity: 0.65;
+      white-space: nowrap;
+    }
+
+    .condition-btn:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+      box-shadow: 0 0 8px var(--cond-color);
+    }
+
+    .condition-btn.active {
+      background: var(--cond-color);
+      color: var(--cond-text, #ffffff);
+      opacity: 1;
+      font-weight: 800;
+      border-color: var(--cond-color);
+      box-shadow: 0 0 12px var(--cond-color), inset 0 0 4px rgba(255, 255, 255, 0.3);
+      transform: scale(1.02);
+    }
+
     .character-square-container {
       display: flex;
       flex-direction: column;
@@ -314,7 +372,7 @@
     .character-square {
       width: var(--square-size);
       height: var(--square-size);
-      background: #0f111a;
+      background: #0b0d14;
       border: 2px dashed var(--card-border);
       border-radius: 12px;
       position: relative;
@@ -338,13 +396,13 @@
     .upload-hint {
       position: absolute;
       inset: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0,0,0,0.65);
       color: #fff;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       opacity: 0;
       transition: opacity 0.2s;
       text-align: center;
@@ -371,7 +429,7 @@
       color: var(--text-main);
       font-weight: bold;
       text-align: center;
-      font-size: 1rem;
+      font-size: 0.95rem;
       padding: 2px;
       transition: border-color 0.2s;
     }
@@ -381,7 +439,6 @@
       border-bottom-color: var(--accent-gold);
     }
 
-    /* Actions */
     .card-actions button {
       padding: 6px 10px;
       font-size: 0.9rem;
@@ -396,10 +453,16 @@
       color: #fff;
     }
 
-    /* Mobile & iPad Responsive Adjustments */
-    @media (max-width: 650px) {
+    @media (max-width: 850px) {
       .combatant-card {
         flex-wrap: wrap;
+      }
+      .conditions-section {
+        border-right: none;
+        border-bottom: 1px solid var(--card-border);
+        padding-right: 0;
+        padding-bottom: 10px;
+        width: 100%;
       }
       .hp-section {
         border-right: none;
@@ -407,6 +470,7 @@
         padding-right: 0;
         padding-bottom: 10px;
         width: 100%;
+        max-width: 100%;
       }
       .character-square-container {
         flex: 1;
@@ -417,16 +481,16 @@
 <body>
 
   <header>
-    <div class="header-title">⚔️ Initiative Tracker</div>
+    <div class="header-title">⚔️ Initiative & HP Tracker</div>
 
     <div class="header-controls">
       <div class="size-picker">
-        <label for="square-slider">Square Size:</label>
-        <input type="range" id="square-slider" min="80" max="220" value="140" oninput="adjustSquareSize(this.value)" />
+        <label for="square-slider">Token-Größe:</label>
+        <input type="range" id="square-slider" min="80" max="200" value="130" oninput="adjustSquareSize(this.value)" />
       </div>
 
-      <button onclick="addCombatant()" class="btn-primary">+ Add Creature</button>
-      <button onclick="resetTracker()" class="btn-danger">Clear All</button>
+      <button onclick="addCombatant()" class="btn-primary">+ Kreatur Hinzufügen</button>
+      <button onclick="resetTracker()" class="btn-danger">Alle Löschen</button>
     </div>
   </header>
 
@@ -435,16 +499,32 @@
   </div>
 
   <script>
+    const CONDITIONS = [
+      { id: 'betaeubt', name: 'Betäubt', color: '#eab308', textOnActive: '#000000' },
+      { id: 'bewusstlos', name: 'Bewusstlos', color: '#dc2626', textOnActive: '#ffffff' },
+      { id: 'blind', name: 'Blind', color: '#6366f1', textOnActive: '#ffffff' },
+      { id: 'erschoepft', name: 'Erschöpft', color: '#d97706', textOnActive: '#ffffff' },
+      { id: 'festgesetzt', name: 'Festgesetzt', color: '#f97316', textOnActive: '#ffffff' },
+      { id: 'gelaehmt', name: 'Gelähmt', color: '#0284c7', textOnActive: '#ffffff' },
+      { id: 'gepackt', name: 'Gepackt', color: '#a16207', textOnActive: '#ffffff' },
+      { id: 'kampfunfaehig', name: 'Kampfunfähig', color: '#e11d48', textOnActive: '#ffffff' },
+      { id: 'liegend', name: 'Liegend', color: '#0d9488', textOnActive: '#ffffff' },
+      { id: 'taub', name: 'Taub', color: '#64748b', textOnActive: '#ffffff' },
+      { id: 'unsichtbar', name: 'Unsichtbar', color: '#06b6d4', textOnActive: '#ffffff' },
+      { id: 'veraengstigt', name: 'Verängstigt', color: '#8b5cf6', textOnActive: '#ffffff' },
+      { id: 'vergiftet', name: 'Vergiftet', color: '#16a34a', textOnActive: '#ffffff' },
+      { id: 'versteinert', name: 'Versteinert', color: '#71717a', textOnActive: '#ffffff' }
+    ];
+
     let activeId = null;
     let combatants = [];
 
-    // Local Storage Functions
     function saveToStorage() {
       try {
         localStorage.setItem('dnd_tracker_combatants', JSON.stringify(combatants));
         localStorage.setItem('dnd_tracker_activeId', activeId || '');
       } catch (e) {
-        console.warn('Storage limit reached or blocked', e);
+        console.warn('LocalStorage constraint or error:', e);
       }
     }
 
@@ -453,19 +533,22 @@
       const savedActive = localStorage.getItem('dnd_tracker_activeId');
       if (savedData) {
         combatants = JSON.parse(savedData);
+        // Ensure conditions array exists for each combatant
+        combatants.forEach(c => {
+          if (!Array.isArray(c.conditions)) c.conditions = [];
+        });
         activeId = savedActive || (combatants.length > 0 ? combatants[0].id : null);
         return true;
       }
       return false;
     }
 
-    // Onload: Load saved state or default demo cards
     window.onload = () => {
       const hasSavedData = loadFromStorage();
       if (!hasSavedData) {
-        addCombatant('Hero Paladin', 20, 50, 'https://picsum.photos/seed/paladin/200');
-        addCombatant('Goblin Leader', 14, 18, 'https://picsum.photos/seed/goblin/200');
-        addCombatant('Wizard', 8, 22, 'https://picsum.photos/seed/wizard/200');
+        addCombatant('Held Paladin', 20, 50, 'https://picsum.photos/seed/paladin/200');
+        addCombatant('Goblin Anführer', 14, 18, 'https://picsum.photos/seed/goblin/200');
+        addCombatant('Magier', 8, 22, 'https://picsum.photos/seed/wizard/200');
       } else {
         render();
       }
@@ -479,7 +562,7 @@
       combatants.sort((a, b) => b.init - a.init);
     }
 
-    function addCombatant(name = 'New Creature', init = 10, maxHp = 30, imgUrl = '') {
+    function addCombatant(name = 'Neue Kreatur', init = 10, maxHp = 30, imgUrl = '') {
       const id = Date.now() + Math.random().toString(36).substr(2, 4);
       const hp = Number(maxHp);
       combatants.push({
@@ -490,7 +573,8 @@
         maxHp: hp,
         tempHp: 0,
         img: imgUrl,
-        history: [`Created with ${hp} HP`]
+        conditions: [],
+        history: [`Erstellt mit ${hp} HP`]
       });
       sortCombatants();
       if (!activeId) activeId = id;
@@ -514,14 +598,14 @@
       render();
     }
 
-    /* Live Update Handlers */
     function handleMaxHpInput(id, val) {
       const c = combatants.find(x => x.id === id);
       if (c) {
         const newMax = Math.max(0, parseInt(val) || 0);
         c.maxHp = newMax;
-        c.hp = newMax;
+        c.hp = newMax; // Update current HP to match new Max HP immediately
 
+        // Sync current HP input element in real-time without re-rendering
         const currInput = document.getElementById(`curr-hp-${id}`);
         if (currInput) currInput.value = newMax;
         saveToStorage();
@@ -554,13 +638,12 @@
       const c = combatants.find(x => x.id === id);
       if (c) {
         c.hp = c.maxHp;
-        c.history.unshift(`Restored to full HP (${c.maxHp})`);
+        c.history.unshift(`Vollständig geheilt (${c.maxHp} HP)`);
         saveToStorage();
         render();
       }
     }
 
-    /* Damage, Healing & Temp HP Logic */
     function applyDamage(id) {
       const c = combatants.find(x => x.id === id);
       const valInput = document.getElementById(`val-${id}`);
@@ -585,8 +668,8 @@
       c.hp -= dmgRemaining;
       if (c.hp < 0) c.hp = 0;
 
-      let logMsg = `-${amount} Dmg`;
-      if (tempAbsorbed > 0) logMsg += ` (${tempAbsorbed} to Temp HP)`;
+      let logMsg = `-${amount} Schdn`;
+      if (tempAbsorbed > 0) logMsg += ` (${tempAbsorbed} Temp HP)`;
       c.history.unshift(logMsg);
 
       valInput.value = '';
@@ -603,7 +686,7 @@
       c.hp += amount;
       if (c.hp > c.maxHp) c.hp = c.maxHp;
 
-      c.history.unshift(`+${amount} Heal`);
+      c.history.unshift(`+${amount} Heilung`);
       valInput.value = '';
       saveToStorage();
       render();
@@ -622,12 +705,37 @@
       render();
     }
 
+    function toggleCondition(combatantId, conditionId) {
+      const c = combatants.find(x => x.id === combatantId);
+      if (!c) return;
+      if (!Array.isArray(c.conditions)) c.conditions = [];
+
+      const index = c.conditions.indexOf(conditionId);
+      if (index > -1) {
+        c.conditions.splice(index, 1);
+      } else {
+        c.conditions.push(conditionId);
+      }
+
+      saveToStorage();
+
+      // Fast DOM toggle for immediate visual feedback without losing any focus state
+      const btn = document.getElementById(`cond-${combatantId}-${conditionId}`);
+      if (btn) {
+        if (c.conditions.includes(conditionId)) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      }
+    }
+
     function handleImageUpload(id, input) {
       if (input.files && input.files[0]) {
         const reader = new FileReader();
         reader.onload = function(e) {
           const c = combatants.find(x => x.id === id);
-          c.img = e.target.result; // Saved as base64 string
+          c.img = e.target.result;
           saveToStorage();
           render();
         };
@@ -644,7 +752,7 @@
     }
 
     function resetTracker() {
-      if (confirm("Are you sure you want to clear all characters and saved data?")) {
+      if (confirm("Möchtest du wirklich alle Kreaturen und gespeicherten Daten löschen?")) {
         combatants = [];
         activeId = null;
         localStorage.removeItem('dnd_tracker_combatants');
@@ -653,7 +761,6 @@
       }
     }
 
-    /* Render UI Cards */
     function render() {
       const listEl = document.getElementById('tracker-list');
       listEl.innerHTML = '';
@@ -664,6 +771,22 @@
         const card = document.createElement('div');
         card.className = `combatant-card ${isActive ? 'is-active' : ''}`;
         card.onclick = () => setActive(c.id);
+
+        // Build HTML for condition buttons
+        const conditionsHtml = CONDITIONS.map(cond => {
+          const isCondActive = Array.isArray(c.conditions) && c.conditions.includes(cond.id);
+          return `
+            <button 
+              id="cond-${c.id}-${cond.id}"
+              class="condition-btn ${isCondActive ? 'active' : ''}" 
+              style="--cond-color: ${cond.color}; --cond-text: ${cond.textOnActive};"
+              onclick="event.stopPropagation(); toggleCondition('${c.id}', '${cond.id}')"
+              title="${cond.name}"
+            >
+              ${cond.name}
+            </button>
+          `;
+        }).join('');
 
         card.innerHTML = `
           <!-- INITIATIVE INPUT -->
@@ -677,16 +800,16 @@
             <div class="hp-stats">
               <span class="hp-display">
                 ❤️ 
-                <input type="number" id="curr-hp-${c.id}" class="hp-number-input" value="${c.hp}" title="Current HP" oninput="handleCurrentHpInput('${c.id}', this.value)" />
+                <input type="number" id="curr-hp-${c.id}" class="hp-number-input" value="${c.hp}" title="Aktuelle HP" oninput="handleCurrentHpInput('${c.id}', this.value)" />
                 /
-                <input type="number" id="max-hp-${c.id}" class="max-hp-input" value="${c.maxHp}" title="Max HP" oninput="handleMaxHpInput('${c.id}', this.value)" />
+                <input type="number" id="max-hp-${c.id}" class="max-hp-input" value="${c.maxHp}" title="Maximale HP" oninput="handleMaxHpInput('${c.id}', this.value)" />
               </span>
-              <button class="btn-full-hp" onclick="resetToFullHp('${c.id}')" title="Set HP to Max">Full</button>
+              <button class="btn-full-hp" onclick="resetToFullHp('${c.id}')" title="HP auf Maximum zurücksetzen">Full</button>
               ${c.tempHp > 0 ? `<span class="temp-hp-display">🛡️ +${c.tempHp}</span>` : ''}
             </div>
 
             <div class="hp-inputs">
-              <input type="number" id="val-${c.id}" placeholder="Amt" min="1" />
+              <input type="number" id="val-${c.id}" placeholder="Wert" min="1" />
               <div class="hp-buttons">
                 <button onclick="applyDamage('${c.id}')" class="btn-danger">- Dmg</button>
                 <button onclick="applyHeal('${c.id}')" class="btn-success">+ Heal</button>
@@ -696,9 +819,17 @@
 
             <div class="history-box">
               ${c.history.map(h => {
-                let classType = h.includes('Dmg') ? 'dmg' : h.includes('Heal') || h.includes('Restored') ? 'heal' : 'temp';
+                let classType = h.includes('Schdn') ? 'dmg' : h.includes('Heilung') || h.includes('Vollständig') ? 'heal' : 'temp';
                 return `<div class="history-entry ${classType}">${h}</div>`;
               }).join('')}
+            </div>
+          </div>
+
+          <!-- 14 GERMAN CONDITIONS SECTION -->
+          <div class="conditions-section" onclick="event.stopPropagation()">
+            <div class="conditions-header">Zustände</div>
+            <div class="conditions-grid">
+              ${conditionsHtml}
             </div>
           </div>
 
@@ -706,7 +837,7 @@
           <div class="character-square-container">
             <div class="character-square ${!c.img ? 'empty' : ''}">
               ${c.img ? `<img src="${c.img}" alt="Token" />` : `<span style="font-size:2rem;">👤</span>`}
-              <div class="upload-hint">📷 Change Image</div>
+              <div class="upload-hint">📷 Bild Ändern</div>
               <input type="file" accept="image/*" onchange="handleImageUpload('${c.id}', this)" onclick="event.stopPropagation()" />
             </div>
             <input type="text" class="name-input" value="${c.name}" oninput="updateName('${c.id}', this.value)" onclick="event.stopPropagation()" />
@@ -714,7 +845,7 @@
 
           <!-- DELETE BUTTON -->
           <div class="card-actions">
-            <button onclick="removeCombatant('${c.id}', event)" title="Remove Creature">✕</button>
+            <button onclick="removeCombatant('${c.id}', event)" title="Kreatur Entfernen">✕</button>
           </div>
         `;
 
