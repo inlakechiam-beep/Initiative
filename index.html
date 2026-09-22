@@ -192,8 +192,9 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      min-width: 220px;
-      max-width: 250px;
+      width: fit-content;
+      max-width: fit-content;
+      flex-shrink: 0;
       border-right: 1px solid var(--card-border);
       padding-right: 14px;
     }
@@ -367,6 +368,8 @@
       align-items: center;
       gap: 6px;
       user-select: none;
+      border-right: 1px solid var(--card-border);
+      padding-right: 14px;
     }
 
     .character-square {
@@ -458,11 +461,22 @@
         flex-wrap: wrap;
       }
       .conditions-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 14px;
+      min-width: 220px;
+    }
+
+    .conditions-header {
+    @media (max-width: 850px) {
+      .combatant-card {
+        flex-wrap: wrap;
+      }
+      .character-square-container {
         border-right: none;
-        border-bottom: 1px solid var(--card-border);
         padding-right: 0;
-        padding-bottom: 10px;
-        width: 100%;
       }
       .hp-section {
         border-right: none;
@@ -472,8 +486,12 @@
         width: 100%;
         max-width: 100%;
       }
-      .character-square-container {
-        flex: 1;
+      .conditions-section {
+        border-right: none;
+        border-bottom: 1px solid var(--card-border);
+        padding-right: 0;
+        padding-bottom: 10px;
+        width: 100%;
       }
     }
   </style>
@@ -789,13 +807,23 @@
         }).join('');
 
         card.innerHTML = `
-          <!-- INITIATIVE INPUT -->
+          <!-- 1. INITIATIVE INPUT -->
           <div class="init-badge" onclick="event.stopPropagation()">
             <label>INIT</label>
             <input type="number" value="${c.init}" oninput="handleInitInput('${c.id}', this.value)" onchange="finalizeInitChange()" />
           </div>
 
-          <!-- HP & CALCULATOR SECTION -->
+          <!-- 2. SQUARE IMAGE & NAME -->
+          <div class="character-square-container" onclick="event.stopPropagation()">
+            <div class="character-square ${!c.img ? 'empty' : ''}">
+              ${c.img ? `<img src="${c.img}" alt="Token" />` : `<span style="font-size:2rem;">👤</span>`}
+              <div class="upload-hint">📷 Bild Ändern</div>
+              <input type="file" accept="image/*" onchange="handleImageUpload('${c.id}', this)" onclick="event.stopPropagation()" />
+            </div>
+            <input type="text" class="name-input" value="${c.name}" oninput="updateName('${c.id}', this.value)" onclick="event.stopPropagation()" />
+          </div>
+
+          <!-- 3. HP & CALCULATOR SECTION -->
           <div class="hp-section" onclick="event.stopPropagation()">
             <div class="hp-stats">
               <span class="hp-display">
@@ -825,7 +853,7 @@
             </div>
           </div>
 
-          <!-- 14 GERMAN CONDITIONS SECTION -->
+          <!-- 4. 14 GERMAN CONDITIONS SECTION -->
           <div class="conditions-section" onclick="event.stopPropagation()">
             <div class="conditions-header">Zustände</div>
             <div class="conditions-grid">
@@ -833,17 +861,7 @@
             </div>
           </div>
 
-          <!-- SQUARE IMAGE & NAME -->
-          <div class="character-square-container">
-            <div class="character-square ${!c.img ? 'empty' : ''}">
-              ${c.img ? `<img src="${c.img}" alt="Token" />` : `<span style="font-size:2rem;">👤</span>`}
-              <div class="upload-hint">📷 Bild Ändern</div>
-              <input type="file" accept="image/*" onchange="handleImageUpload('${c.id}', this)" onclick="event.stopPropagation()" />
-            </div>
-            <input type="text" class="name-input" value="${c.name}" oninput="updateName('${c.id}', this.value)" onclick="event.stopPropagation()" />
-          </div>
-
-          <!-- DELETE BUTTON -->
+          <!-- 5. DELETE BUTTON -->
           <div class="card-actions">
             <button onclick="removeCombatant('${c.id}', event)" title="Kreatur Entfernen">✕</button>
           </div>
