@@ -16,8 +16,8 @@
       --success: #22c55e;
       --temp-hp: #a855f7;
       
-      /* Dynamic square sizing variable controlled by header slider */
-      --square-size: 130px;
+      /* Dynamic token square sizing variable */
+      --square-size: 125px;
     }
 
     * {
@@ -40,17 +40,17 @@
 
     header {
       width: 100%;
-      max-width: 1100px;
+      max-width: 1180px;
       background: var(--card-bg);
       border: 1px solid var(--card-border);
       border-radius: 12px;
-      padding: 14px 20px;
+      padding: 12px 18px;
       margin-bottom: 20px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 15px;
+      gap: 12px;
       box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
       position: sticky;
       top: 10px;
@@ -70,7 +70,7 @@
     .header-controls {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
@@ -78,19 +78,20 @@
       background: #23273e;
       color: #fff;
       border: 1px solid var(--card-border);
-      padding: 8px 16px;
+      padding: 8px 12px;
       border-radius: 8px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 4px;
     }
 
     button:hover {
-      filter: brightness(1.15);
+      filter: brightness(1.18);
     }
 
     button:active {
@@ -99,25 +100,27 @@
 
     button.btn-primary { background: #3b82f6; }
     button.btn-success { background: var(--success); }
+    button.btn-warning { background: #d97706; color: #fff; }
     button.btn-danger { background: var(--danger); }
 
     .size-picker {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
+      gap: 6px;
+      font-size: 0.82rem;
       color: var(--text-muted);
+      margin-right: 4px;
     }
 
     .size-picker input {
-      width: 80px;
+      width: 75px;
       accent-color: var(--accent-gold);
       cursor: pointer;
     }
 
     #tracker-list {
       width: 100%;
-      max-width: 1100px;
+      max-width: 1180px;
       display: flex;
       flex-direction: column;
       gap: 16px;
@@ -128,11 +131,11 @@
       background: var(--card-bg);
       border: 2px solid var(--card-border);
       border-radius: 14px;
-      padding: 14px;
+      padding: 12px 14px;
       display: flex;
       flex-direction: row;
       align-items: center;
-      gap: 16px;
+      gap: 14px;
       transition: all 0.25s ease;
       position: relative;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
@@ -159,6 +162,7 @@
       letter-spacing: 1px;
     }
 
+    /* 1. Initiative Badge */
     .init-badge {
       display: flex;
       flex-direction: column;
@@ -168,32 +172,114 @@
       border: 2px solid var(--card-border);
       border-radius: 10px;
       padding: 8px 6px;
-      min-width: 60px;
+      min-width: 58px;
     }
 
     .init-badge label {
-      font-size: 0.65rem;
+      font-size: 0.62rem;
       font-weight: 900;
       color: var(--accent-gold);
       letter-spacing: 0.5px;
     }
 
     .init-badge input {
-      width: 45px;
+      width: 42px;
       background: transparent;
       border: none;
       color: #fff;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: bold;
       text-align: center;
     }
 
+    /* 2. Character Square & Name Container */
+    .character-square-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+      border-right: 1px solid var(--card-border);
+      padding-right: 14px;
+    }
+
+    .character-square {
+      width: var(--square-size);
+      height: var(--square-size);
+      background: #0b0d14;
+      border: 2px dashed var(--card-border);
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: width 0.2s, height 0.2s, border-color 0.2s;
+    }
+
+    .character-square:hover {
+      border-color: var(--accent-gold);
+    }
+
+    .character-square img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .upload-hint {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.7rem;
+      opacity: 0;
+      transition: opacity 0.2s;
+      text-align: center;
+      padding: 4px;
+    }
+
+    .character-square:hover .upload-hint,
+    .character-square.empty .upload-hint {
+      opacity: 1;
+    }
+
+    .character-square input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .name-input {
+      width: var(--square-size);
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-main);
+      font-weight: bold;
+      text-align: center;
+      font-size: 0.92rem;
+      padding: 2px;
+      transition: border-color 0.2s;
+    }
+
+    .name-input:focus {
+      outline: none;
+      border-bottom-color: var(--accent-gold);
+    }
+
+    /* 3. HP Calculator Section - Compact Fixed Width */
     .hp-section {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      width: fit-content;
-      max-width: fit-content;
+      width: 250px;
+      max-width: 250px;
       flex-shrink: 0;
       border-right: 1px solid var(--card-border);
       padding-right: 14px;
@@ -208,7 +294,7 @@
     }
 
     .hp-display {
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       color: var(--success);
       display: flex;
       align-items: center;
@@ -216,32 +302,32 @@
     }
 
     .hp-number-input {
-      width: 54px;
+      width: 52px;
       background: #0b0d14;
       border: 1px solid var(--card-border);
       color: var(--success);
       padding: 4px;
       border-radius: 6px;
       text-align: center;
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: bold;
     }
 
     .max-hp-input {
-      width: 54px;
+      width: 52px;
       background: #0b0d14;
       border: 1px solid var(--card-border);
       color: var(--text-main);
       padding: 4px;
       border-radius: 6px;
       text-align: center;
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: bold;
     }
 
     .btn-full-hp {
       padding: 4px 8px;
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       background: #1e293b;
       border: 1px solid var(--card-border);
       color: var(--accent-gold);
@@ -256,42 +342,75 @@
     }
 
     .temp-hp-display {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: var(--temp-hp);
       font-weight: 700;
     }
 
     .hp-inputs {
       display: flex;
-      gap: 6px;
+      gap: 5px;
     }
 
     .hp-inputs input[type="number"] {
-      width: 55px;
+      width: 52px;
       background: #0b0d14;
       border: 1px solid var(--card-border);
       color: #fff;
       padding: 5px;
       border-radius: 6px;
       text-align: center;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
     .hp-buttons {
       display: flex;
-      gap: 4px;
+      gap: 3px;
     }
 
     .hp-buttons button {
-      padding: 5px 8px;
+      padding: 5px 7px;
+      font-size: 0.72rem;
+    }
+
+    /* Individual History Box Header & Log Container */
+    .history-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .btn-clear-log {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
       font-size: 0.75rem;
+      padding: 0 4px;
+      opacity: 0.7;
+    }
+
+    .btn-clear-log:hover {
+      opacity: 1;
+      color: var(--danger);
     }
 
     .history-box {
       background: #0b0d14;
       border-radius: 6px;
-      padding: 6px 8px;
-      max-height: 50px;
+      padding: 5px 7px;
+      height: 48px;
+      max-height: 48px;
       overflow-y: auto;
       font-size: 0.72rem;
       color: var(--text-muted);
@@ -305,7 +424,9 @@
     .history-entry.dmg { color: #f87171; }
     .history-entry.heal { color: #4ade80; }
     .history-entry.temp { color: #c084fc; }
+    .history-entry.empty { color: #475569; font-style: italic; }
 
+    /* 4. German Conditions Section - Flexible Layout */
     .conditions-section {
       flex: 1;
       display: flex;
@@ -317,7 +438,7 @@
     }
 
     .conditions-header {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 800;
       color: var(--text-muted);
       letter-spacing: 0.8px;
@@ -362,86 +483,7 @@
       transform: scale(1.02);
     }
 
-    .character-square-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      user-select: none;
-      border-right: 1px solid var(--card-border);
-      padding-right: 14px;
-    }
-
-    .character-square {
-      width: var(--square-size);
-      height: var(--square-size);
-      background: #0b0d14;
-      border: 2px dashed var(--card-border);
-      border-radius: 12px;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: width 0.2s, height 0.2s, border-color 0.2s;
-    }
-
-    .character-square:hover {
-      border-color: var(--accent-gold);
-    }
-
-    .character-square img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .upload-hint {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.65);
-      color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      font-size: 0.72rem;
-      opacity: 0;
-      transition: opacity 0.2s;
-      text-align: center;
-      padding: 4px;
-    }
-
-    .character-square:hover .upload-hint,
-    .character-square.empty .upload-hint {
-      opacity: 1;
-    }
-
-    .character-square input[type="file"] {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-    }
-
-    .name-input {
-      width: var(--square-size);
-      background: transparent;
-      border: none;
-      border-bottom: 2px solid transparent;
-      color: var(--text-main);
-      font-weight: bold;
-      text-align: center;
-      font-size: 0.95rem;
-      padding: 2px;
-      transition: border-color 0.2s;
-    }
-
-    .name-input:focus {
-      outline: none;
-      border-bottom-color: var(--accent-gold);
-    }
-
+    /* 5. Delete Action */
     .card-actions button {
       padding: 6px 10px;
       font-size: 0.9rem;
@@ -456,20 +498,32 @@
       color: #fff;
     }
 
-    @media (max-width: 850px) {
-      .combatant-card {
-        flex-wrap: wrap;
-      }
-      .conditions-section {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      padding-right: 14px;
-      min-width: 220px;
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1e293b;
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.88rem;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.6);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+      z-index: 1000;
     }
 
-    .conditions-header {
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Responsive adjustments for iPad & smaller screens */
     @media (max-width: 850px) {
       .combatant-card {
         flex-wrap: wrap;
@@ -503,11 +557,12 @@
 
     <div class="header-controls">
       <div class="size-picker">
-        <label for="square-slider">Token-Größe:</label>
-        <input type="range" id="square-slider" min="80" max="200" value="130" oninput="adjustSquareSize(this.value)" />
+        <label for="square-slider">Token:</label>
+        <input type="range" id="square-slider" min="80" max="180" value="125" oninput="adjustSquareSize(this.value)" />
       </div>
 
-      <button onclick="addCombatant()" class="btn-primary">+ Kreatur Hinzufügen</button>
+      <button onclick="addCombatant()" class="btn-primary">+ Kreatur</button>
+      <button onclick="resetAllLogs()" class="btn-warning" title="Logs für alle Kreaturen leeren">📜 Alle Logs zurücksetzen</button>
       <button onclick="resetTracker()" class="btn-danger">Alle Löschen</button>
     </div>
   </header>
@@ -516,22 +571,26 @@
     <!-- Dynamic Cards Rendered Here -->
   </div>
 
+  <div id="toast">Aktion ausgeführt</div>
+
   <script>
+    // 15 German D&D conditions with custom color scheme
     const CONDITIONS = [
-      { id: 'betaeubt', name: 'Betäubt', color: '#eab308', textOnActive: '#000000' },
-      { id: 'bewusstlos', name: 'Bewusstlos', color: '#dc2626', textOnActive: '#ffffff' },
-      { id: 'blind', name: 'Blind', color: '#6366f1', textOnActive: '#ffffff' },
+      { id: 'betaeubt', name: 'Betäubt', color: '#f59e0b', textOnActive: '#000000' },
+      { id: 'bewusstlos', name: 'Bewusstlos', color: '#64748b', textOnActive: '#ffffff' },
+      { id: 'bezaubert', name: 'Bezaubert', color: '#ec4899', textOnActive: '#ffffff' },
+      { id: 'blind', name: 'Blind', color: '#3b82f6', textOnActive: '#ffffff' },
       { id: 'erschoepft', name: 'Erschöpft', color: '#d97706', textOnActive: '#ffffff' },
-      { id: 'festgesetzt', name: 'Festgesetzt', color: '#f97316', textOnActive: '#ffffff' },
-      { id: 'gelaehmt', name: 'Gelähmt', color: '#0284c7', textOnActive: '#ffffff' },
-      { id: 'gepackt', name: 'Gepackt', color: '#a16207', textOnActive: '#ffffff' },
-      { id: 'kampfunfaehig', name: 'Kampfunfähig', color: '#e11d48', textOnActive: '#ffffff' },
-      { id: 'liegend', name: 'Liegend', color: '#0d9488', textOnActive: '#ffffff' },
-      { id: 'taub', name: 'Taub', color: '#64748b', textOnActive: '#ffffff' },
+      { id: 'festgesetzt', name: 'Festgesetzt', color: '#8b5cf6', textOnActive: '#ffffff' },
+      { id: 'gelaehmt', name: 'Gelähmt', color: '#ef4444', textOnActive: '#ffffff' },
+      { id: 'gepackt', name: 'Gepackt', color: '#14b8a6', textOnActive: '#000000' },
+      { id: 'kampfunfaehig', name: 'Kampfunfähig', color: '#dc2626', textOnActive: '#ffffff' },
+      { id: 'liegend', name: 'Liegend', color: '#a855f7', textOnActive: '#ffffff' },
+      { id: 'taub', name: 'Taub', color: '#6366f1', textOnActive: '#ffffff' },
       { id: 'unsichtbar', name: 'Unsichtbar', color: '#06b6d4', textOnActive: '#ffffff' },
-      { id: 'veraengstigt', name: 'Verängstigt', color: '#8b5cf6', textOnActive: '#ffffff' },
-      { id: 'vergiftet', name: 'Vergiftet', color: '#16a34a', textOnActive: '#ffffff' },
-      { id: 'versteinert', name: 'Versteinert', color: '#71717a', textOnActive: '#ffffff' }
+      { id: 'veraengstigt', name: 'Verängstigt', color: '#10b981', textOnActive: '#ffffff' },
+      { id: 'vergiftet', name: 'Vergiftet', color: '#22c55e', textOnActive: '#ffffff' },
+      { id: 'versteinert', name: 'Versteinert', color: '#78716c', textOnActive: '#ffffff' }
     ];
 
     let activeId = null;
@@ -542,7 +601,7 @@
         localStorage.setItem('dnd_tracker_combatants', JSON.stringify(combatants));
         localStorage.setItem('dnd_tracker_activeId', activeId || '');
       } catch (e) {
-        console.warn('LocalStorage constraint or error:', e);
+        console.warn('LocalStorage limit or error:', e);
       }
     }
 
@@ -551,14 +610,24 @@
       const savedActive = localStorage.getItem('dnd_tracker_activeId');
       if (savedData) {
         combatants = JSON.parse(savedData);
-        // Ensure conditions array exists for each combatant
         combatants.forEach(c => {
           if (!Array.isArray(c.conditions)) c.conditions = [];
+          if (!Array.isArray(c.history)) c.history = [];
         });
         activeId = savedActive || (combatants.length > 0 ? combatants[0].id : null);
         return true;
       }
       return false;
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      if (!toast) return;
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2200);
     }
 
     window.onload = () => {
@@ -601,7 +670,7 @@
     }
 
     function removeCombatant(id, e) {
-      e.stopPropagation();
+      if (e) e.stopPropagation();
       combatants = combatants.filter(c => c.id !== id);
       if (activeId === id) {
         activeId = combatants.length > 0 ? combatants[0].id : null;
@@ -621,9 +690,8 @@
       if (c) {
         const newMax = Math.max(0, parseInt(val) || 0);
         c.maxHp = newMax;
-        c.hp = newMax; // Update current HP to match new Max HP immediately
+        c.hp = newMax; // Max HP instantly syncs as Current HP
 
-        // Sync current HP input element in real-time without re-rendering
         const currInput = document.getElementById(`curr-hp-${id}`);
         if (currInput) currInput.value = newMax;
         saveToStorage();
@@ -737,7 +805,6 @@
 
       saveToStorage();
 
-      // Fast DOM toggle for immediate visual feedback without losing any focus state
       const btn = document.getElementById(`cond-${combatantId}-${conditionId}`);
       if (btn) {
         if (c.conditions.includes(conditionId)) {
@@ -746,6 +813,17 @@
           btn.classList.remove('active');
         }
       }
+    }
+
+    // Global Log Clear (NO confirm prompt to ensure complete execution)
+    function resetAllLogs() {
+      if (combatants.length === 0) return;
+      combatants.forEach(c => {
+        c.history = [];
+      });
+      saveToStorage();
+      render();
+      showToast("📜 Alle Logs wurden zurückgesetzt!");
     }
 
     function handleImageUpload(id, input) {
@@ -770,13 +848,12 @@
     }
 
     function resetTracker() {
-      if (confirm("Möchtest du wirklich alle Kreaturen und gespeicherten Daten löschen?")) {
-        combatants = [];
-        activeId = null;
-        localStorage.removeItem('dnd_tracker_combatants');
-        localStorage.removeItem('dnd_tracker_activeId');
-        render();
-      }
+      combatants = [];
+      activeId = null;
+      localStorage.removeItem('dnd_tracker_combatants');
+      localStorage.removeItem('dnd_tracker_activeId');
+      render();
+      showToast("Alle Kreaturen gelöscht!");
     }
 
     function render() {
@@ -790,7 +867,6 @@
         card.className = `combatant-card ${isActive ? 'is-active' : ''}`;
         card.onclick = () => setActive(c.id);
 
-        // Build HTML for condition buttons
         const conditionsHtml = CONDITIONS.map(cond => {
           const isCondActive = Array.isArray(c.conditions) && c.conditions.includes(cond.id);
           return `
@@ -813,17 +889,17 @@
             <input type="number" value="${c.init}" oninput="handleInitInput('${c.id}', this.value)" onchange="finalizeInitChange()" />
           </div>
 
-          <!-- 2. SQUARE IMAGE & NAME -->
+          <!-- 2. SQUARE IMAGE & NAME (ORDER: Next to Init) -->
           <div class="character-square-container" onclick="event.stopPropagation()">
             <div class="character-square ${!c.img ? 'empty' : ''}">
-              ${c.img ? `<img src="${c.img}" alt="Token" />` : `<span style="font-size:2rem;">👤</span>`}
+              ${c.img ? `<img src="${c.img}" alt="Token" />` : `<span style="font-size:1.8rem;">👤</span>`}
               <div class="upload-hint">📷 Bild Ändern</div>
               <input type="file" accept="image/*" onchange="handleImageUpload('${c.id}', this)" onclick="event.stopPropagation()" />
             </div>
             <input type="text" class="name-input" value="${c.name}" oninput="updateName('${c.id}', this.value)" onclick="event.stopPropagation()" />
           </div>
 
-          <!-- 3. HP & CALCULATOR SECTION -->
+          <!-- 3. HP & CALCULATOR SECTION (Compact Width) -->
           <div class="hp-section" onclick="event.stopPropagation()">
             <div class="hp-stats">
               <span class="hp-display">
@@ -832,7 +908,7 @@
                 /
                 <input type="number" id="max-hp-${c.id}" class="max-hp-input" value="${c.maxHp}" title="Maximale HP" oninput="handleMaxHpInput('${c.id}', this.value)" />
               </span>
-              <button class="btn-full-hp" onclick="resetToFullHp('${c.id}')" title="HP auf Maximum zurücksetzen">Full</button>
+              <button class="btn-full-hp" onclick="resetToFullHp('${c.id}')" title="HP auf Max zurücksetzen">Full</button>
               ${c.tempHp > 0 ? `<span class="temp-hp-display">🛡️ +${c.tempHp}</span>` : ''}
             </div>
 
@@ -845,15 +921,23 @@
               </div>
             </div>
 
-            <div class="history-box">
-              ${c.history.map(h => {
-                let classType = h.includes('Schdn') ? 'dmg' : h.includes('Heilung') || h.includes('Vollständig') ? 'heal' : 'temp';
-                return `<div class="history-entry ${classType}">${h}</div>`;
-              }).join('')}
+            <div class="history-container">
+              <div class="history-header">
+                <span>VERLAUF</span>
+              </div>
+              <div class="history-box">
+                ${c.history && c.history.length > 0 
+                  ? c.history.map(h => {
+                      let classType = h.includes('Schdn') ? 'dmg' : h.includes('Heilung') || h.includes('Vollständig') ? 'heal' : 'temp';
+                      return `<div class="history-entry ${classType}">${h}</div>`;
+                    }).join('')
+                  : `<div class="history-entry empty">Keine Einträge</div>`
+                }
+              </div>
             </div>
           </div>
 
-          <!-- 4. 14 GERMAN CONDITIONS SECTION -->
+          <!-- 4. GERMAN CONDITIONS SECTION (Flex Fill) -->
           <div class="conditions-section" onclick="event.stopPropagation()">
             <div class="conditions-header">Zustände</div>
             <div class="conditions-grid">
